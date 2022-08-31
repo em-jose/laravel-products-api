@@ -62,7 +62,7 @@ class ProductController extends Controller
             $query->where('prices.original_price', '<=', $price_less_than_filter);
         }
 
-        $products = $query->take(2000)->get();
+        $products = $query->take(5)->get();
 
         return $products;
     }
