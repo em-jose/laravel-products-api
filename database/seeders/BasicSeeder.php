@@ -117,18 +117,19 @@ class BasicSeeder extends Seeder
         ]);
 
         // Populate discounts
-        DB::table('discounts')->insert([
+        DB::table('discount_categories')->insert([
             [
                 "discount_percentage" => 30,
-                "discountable_type" => 'App\Models\Category',
-                "discountable_id" => 1,
+                "category_id" => 1,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
-            ],
+            ]
+        ]);
+
+        DB::table('discount_products')->insert([
             [
                 "discount_percentage" => 15,
-                "discountable_type" => 'App\Models\Product',
-                "discountable_id" => 3,
+                "product_id" => 3,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
             ]

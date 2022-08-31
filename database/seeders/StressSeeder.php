@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Discount;
+use App\Models\DiscountCategory;
+use App\Models\DiscountProduct;
 use App\Models\Price;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
@@ -26,7 +27,7 @@ class StressSeeder extends Seeder
 
         for ($i=0; $i < 2000; $i++) {
             $product = new Product();
-            $product->sku = fake()->numerify('######');
+            $product->sku = fake()->unique()->numerify('######');
             $product->name = fake()->words(3, true);
             $product->category_id = fake()->randomElement($categories_ids);
             $product->save();
@@ -42,18 +43,16 @@ class StressSeeder extends Seeder
         $products_ids = DB::table('products')->pluck('id');
 
         for ($i=0; $i < 2; $i++) {
-            $category_discount = new Discount();
+            $category_discount = new DiscountCategory();
             $category_discount->discount_percentage = fake()->biasedNumberBetween(10, 90);
-            $category_discount->discountable_type = 'App\Models\Category';
-            $category_discount->discountable_id = fake()->randomElement($categories_ids);
+            $category_discount->category_id = fake()->randomElement($categories_ids);
             $category_discount->save();
         }
 
         for ($i=0; $i < 15; $i++) {
-            $product_discount = new Discount();
+            $product_discount = new DiscountProduct();
             $product_discount->discount_percentage = fake()->biasedNumberBetween(10, 90);
-            $product_discount->discountable_type = 'App\Models\Product';
-            $product_discount->discountable_id = fake()->randomElement($products_ids);
+            $product_discount->product_id = fake()->randomElement($products_ids);
             $product_discount->save();
         }
 

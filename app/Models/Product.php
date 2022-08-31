@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\Price;
 use App\Models\Category;
-use App\Models\Discount;
+use App\Models\DiscountProduct;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -41,20 +41,6 @@ class Product extends Model
      */
     public function discounts()
     {
-        return $this->morphMany(Discount::class, 'discountable');
-    }
-
-    /**
-     * Get the highest discount of one product. If the value is empty return null.
-     *
-     * @return int || null
-     */
-    public function getBiggestPercentageDiscount()
-    {
-        $product_discounts = $this->discounts;
-        $category_discounts = $this->category->discounts;
-        $all_discounts = $product_discounts->merge($category_discounts);
-
-        return $all_discounts->max('discount_percentage');
+        return $this->hasMany(DiscountProduct::class);
     }
 }
