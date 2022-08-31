@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,16 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $current_date_time = Carbon::now()->toDateTimeString();
+
         // Populate categories table
         DB::table('categories')->insert([
             [
-                "name" => "boots"
+                "name" => "boots",
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
-                "name" => "sandals"
+                "name" => "sandals",
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
-                "name" => "sneakers"
+                "name" => "sneakers",
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
         ]);
 
@@ -33,26 +42,36 @@ class DatabaseSeeder extends Seeder
                 "sku" => "000001",
                 "name" => "BV Lean leather ankle boots",
                 "category_id" => 1,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "sku" => "000002",
                 "name" => "BV Lean leather ankle boots",
                 "category_id" => 1,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "sku" => "000003",
                 "name" => "Ashlington leather ankle boots",
                 "category_id" => 1,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "sku" => "000004",
                 "name" => "Naima embellished suede sandals",
                 "category_id" => 2,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "sku" => "000005",
                 "name" => "Nathane leather sneakers",
                 "category_id" => 3,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
         ]);
 
@@ -62,27 +81,37 @@ class DatabaseSeeder extends Seeder
             [
                 "product_id" => 1,
                 "original_price" => 89000,
-                "currency" => $currency
+                "currency" => $currency,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 2,
                 "original_price" => 99000,
-                "currency" => $currency
+                "currency" => $currency,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 3,
                 "original_price" => 71000,
-                "currency" => $currency
+                "currency" => $currency,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 4,
                 "original_price" => 79500,
-                "currency" => $currency
+                "currency" => $currency,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 5,
                 "original_price" => 59000,
-                "currency" => $currency
+                "currency" => $currency,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
 
             ],
         ]);
@@ -92,12 +121,16 @@ class DatabaseSeeder extends Seeder
             [
                 "discount_percentage" => 30,
                 "discountable_type" => 'App\Models\Category',
-                "discountable_id" => 1
+                "discountable_id" => 1,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ],
             [
                 "discount_percentage" => 15,
                 "discountable_type" => 'App\Models\Product',
-                "discountable_id" => 3
+                "discountable_id" => 3,
+                "created_at" => $current_date_time,
+                "updated_at" => $current_date_time
             ]
         ]);
     }
