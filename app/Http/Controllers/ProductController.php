@@ -31,7 +31,7 @@ class ProductController extends Controller
         $category_filter = $request->query('category');
         $price_less_than_filter = $request->query('priceLessThan');
 
-        $products = (new Product())
+        $products = Product::select('products.*')
             ->when($category_filter, function ($query, $category_filter) {
                 $query->join('categories', 'categories.id', '=', 'products.category_id');
                 $query->where('categories.name', '=', $category_filter);
@@ -71,6 +71,7 @@ class ProductController extends Controller
                     $discount_percentage,
                     $original_price
                 );
+                $discount_percentage = sprintf('%d%%', $discount_percentage);
             }
 
             $products_array['products'][] = [
