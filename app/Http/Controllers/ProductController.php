@@ -40,6 +40,7 @@ class ProductController extends Controller
                 $query->join('prices', 'prices.product_id', '=', 'products.id');
                 $query->where('prices.original_price', '<=', $price_less_than_filter);
             })
+            ->take(5)
             ->get();
 
         return $products;
