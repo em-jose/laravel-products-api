@@ -46,4 +46,18 @@ class Product extends Model
     {
         return $this->morphMany(Discount::class, 'discountable');
     }
+
+    /**
+     * Get the highest discount of one product. If the value is empty return null
+     *
+     * @return int || null
+     */
+    public function getBiggestPercentageDiscount()
+    {
+        $product_discounts = $this->discounts;
+        $category_discounts = $this->category->discounts;
+        $all_discounts = $product_discounts->merge($category_discounts);
+
+        return $all_discounts->max('discount_percentage');
+    }
 }
