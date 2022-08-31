@@ -48,7 +48,7 @@ class Product extends Model
     }
 
     /**
-     * Get the highest discount of one product. If the value is empty return null
+     * Get the highest discount of one product. If the value is empty return null.
      *
      * @return int || null
      */

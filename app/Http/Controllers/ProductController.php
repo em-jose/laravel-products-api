@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductController extends Controller
 {
@@ -11,13 +13,52 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::take(5)->get();
+        $products = $this->getProducts($request);
+        $result = $this->processProducts($products);
 
+        return $result;
+    }
+
+    /**
+     * Get the requested products and filter them if it is necessary.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getProducts(Request $request)
+    {
+        $category_filter = $request->query('category');
+        $price_less_than_filter = $request->query('priceLessThan');
+
+        $products = (new Product())
+            ->when($category_filter, function ($query, $category_filter) {
+                $query->join('categories', 'categories.id', '=', 'products.category_id');
+                $query->where('categories.name', '=', $category_filter);
+            })
+            ->when($price_less_than_filter, function ($query, $price_less_than_filter) {
+                $query->join('prices', 'prices.product_id', '=', 'products.id');
+                $query->where('prices.original_price', '<=', $price_less_than_filter);
+            })
+            ->get();
+
+        return $products;
+    }
+
+    /**
+     * Structure the products with all their data.
+     *
+     * @return array
+     */
+    public function processProducts(Collection $products)
+    {
         $products_array = [
             'products' => []
         ];
+
+        if ($products->isEmpty()) {
+            return $products_array;
+        }
 
         foreach ($products as $product) {
             $discount_percentage = $product->getBiggestPercentageDiscount();
@@ -44,11 +85,11 @@ class ProductController extends Controller
             ];
         }
 
-        return response()->json($products_array);
+        return $products_array;
     }
 
     /**
-     * Apply a percentage discount to a price
+     * Apply a percentage discount to a price.
      *
      * @return int
      */
