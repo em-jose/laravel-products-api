@@ -79,13 +79,13 @@ class ProductController extends Controller
             'products' => []
         ];
 
-        $query->orderBy('id')->chunk(100, function ($products) use (&$products_array) {
+        $limit = 5;
+        $count = 1;
+
+        $query->orderBy('id')->chunk(100, function ($products) use (&$products_array, &$count, &$limit) {
             if ($products->isEmpty()) {
                 return false;
             }
-
-            $limit = 5;
-            $count = 1;
 
             foreach ($products as $product) {
                 $products_array['products'][] = $this->processProducts($product);
