@@ -27,14 +27,14 @@ class StressSeeder extends Seeder
 
         for ($i=0; $i < 2000; $i++) {
             $product = new Product();
-            $product->sku = fake()->unique()->numerify('######');
+            $product->sku = fake()->unique()->numerify('#####');
             $product->name = fake()->words(3, true);
             $product->category_id = fake()->randomElement($categories_ids);
             $product->save();
 
             $price = new Price();
             $price->product_id = $product->id;
-            $price->original_price = fake()->numerify('######');
+            $price->original_price = fake()->numerify('####');
             $price->currency = 'EUR';
             $price->save();
         }
@@ -55,6 +55,5 @@ class StressSeeder extends Seeder
             $product_discount->product_id = fake()->randomElement($products_ids);
             $product_discount->save();
         }
-
     }
 }

@@ -80,35 +80,35 @@ class BasicSeeder extends Seeder
         DB::table('prices')->insert([
             [
                 "product_id" => 1,
-                "original_price" => 89000,
+                "original_price" => 890,
                 "currency" => $currency,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 2,
-                "original_price" => 99000,
+                "original_price" => 990,
                 "currency" => $currency,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 3,
-                "original_price" => 71000,
+                "original_price" => 710,
                 "currency" => $currency,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 4,
-                "original_price" => 79500,
+                "original_price" => 795,
                 "currency" => $currency,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time
             ],
             [
                 "product_id" => 5,
-                "original_price" => 59000,
+                "original_price" => 590,
                 "currency" => $currency,
                 "created_at" => $current_date_time,
                 "updated_at" => $current_date_time

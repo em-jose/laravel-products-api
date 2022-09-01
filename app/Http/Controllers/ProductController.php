@@ -130,8 +130,8 @@ class ProductController extends Controller
             'name' => $product->name,
             'category' => $product->category_name,
             'price' => [
-                'original' => $original_price,
-                'final' => $final_price,
+                'original' => number_format($original_price, 2, '', ''),
+                'final' => number_format($final_price, 2, '', ''),
                 'discount_percentage' => $discount_percentage,
                 'currency' => 'EUR'
             ]
