@@ -16,9 +16,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = $this->getProducts($request);
-        $result = $this->processProducts($products);
 
-        return $result;
+        return $products;
     }
 
     /**
@@ -36,19 +35,43 @@ class ProductController extends Controller
                 'products.category_id',
                 'categories.name AS category_name',
                 'prices.original_price',
-                'prices.currency'])
-            ->join(
+                'prices.currency',
+                'discount_categories.discount_percentage as category_discount',
+                'discount_products.discount_percentage as product_discount'])
+            ->leftJoin(
                 'categories',
                 'categories.id',
                 '=',
-                'products.category_id',
-                'left')
-            ->join(
+                'products.category_id'
+            )
+            ->leftJoin(
                 'prices',
                 'prices.product_id',
                 '=',
-                'products.id',
-                'left');
+                'products.id'
+            )
+            ->leftJoin('discount_categories', function ($join) {
+                $join->on(
+                    'discount_categories.id',
+                    '=',
+                    'products.category_id'
+                )->where(
+                    'discount_categories.discount_percentage',
+                    '=',
+                    DB::raw('(SELECT MAX(discount_categories.discount_percentage) FROM discount_categories dc)')
+                );
+            })
+            ->leftJoin('discount_products', function ($join) {
+                $join->on(
+                    'discount_products.product_id',
+                    '=',
+                    'products.id'
+                )->where(
+                    'discount_products.discount_percentage',
+                    '=',
+                    DB::raw('(SELECT MAX(discount_products.discount_percentage) FROM discount_products dp)')
+                );
+            });
 
         $category_filter = $request->query('category');
 
@@ -62,9 +85,21 @@ class ProductController extends Controller
             $query->where('prices.original_price', '<=', $price_less_than_filter);
         }
 
-        $products = $query->take(5)->get();
+        $products_array = [
+            'products' => []
+        ];
 
-        return $products;
+        $query->orderBy('id')->chunk(100, function ($products) use (&$products_array) {
+            if ($products->isEmpty()) {
+                return false;
+            }
+
+            foreach ($products as $product) {
+                $products_array['products'][] = $this->processProducts($product);
+            }
+        });
+
+        return $products_array;
     }
 
     /**
@@ -72,44 +107,37 @@ class ProductController extends Controller
      *
      * @return array
      */
-    public function processProducts(Collection $products)
+    public function processProducts($product)
     {
-        $products_array = [
-            'products' => []
+        $discount_percentage = $this->getHighestPercentageDiscount(
+            $product->product_discount,
+            $product->category_discount
+        );
+        $original_price = $product->original_price;
+        $final_price = $original_price;
+
+        if ($discount_percentage) {
+            $final_price = $this->getDiscountedPrice(
+                $discount_percentage,
+                $original_price
+            );
+
+            $discount_percentage = $this->formatDiscount($discount_percentage);
+        }
+
+        $processed_product = [
+            'sku' => $product->sku,
+            'name' => $product->name,
+            'category' => $product->category_name,
+            'price' => [
+                'original' => $original_price,
+                'final' => $final_price,
+                'discount_percentage' => $discount_percentage,
+                'currency' => 'EUR'
+            ]
         ];
 
-        if ($products->isEmpty()) {
-            return $products_array;
-        }
-
-        foreach ($products as $product) {
-            $discount_percentage = $this->getHighestPercentageDiscount($product->id);
-            $original_price = $product->original_price;
-            $final_price = $original_price;
-
-            if ($discount_percentage) {
-                $final_price = $this->getDiscountedPrice(
-                    $discount_percentage,
-                    $original_price
-                );
-
-                $discount_percentage = $this->formatDiscount($discount_percentage);
-            }
-
-            $products_array['products'][] = [
-                'sku' => $product->sku,
-                'name' => $product->name,
-                'category' => $product->category_name,
-                'price' => [
-                    'original' => $original_price,
-                    'final' => $final_price,
-                    'discount_percentage' => $discount_percentage,
-                    'currency' => 'EUR'
-                ]
-            ];
-        }
-
-        return $products_array;
+        return $processed_product;
     }
 
     /**
@@ -130,29 +158,9 @@ class ProductController extends Controller
      *
      * @return int || null
      */
-    public function getHighestPercentageDiscount(int $product_id)
+    public function getHighestPercentageDiscount($product_discount, $category_discount)
     {
-        $query = DB::table('products')
-            ->selectRaw('
-                    MAX(discount_products.discount_percentage) as product_discount,
-                    MAX(discount_categories.discount_percentage) as category_discount')
-            ->join(
-                'discount_categories',
-                'discount_categories.id',
-                '=',
-                'products.category_id',
-                'left')
-            ->join(
-                'discount_products',
-                'discount_products.product_id',
-                '=',
-                'products.id',
-                'left')
-            ->where('products.id', '=', $product_id);
-
-        $discounts = $query->first();
-
-        $highest_discount = max($discounts->product_discount, $discounts->category_discount);
+        $highest_discount = max($product_discount, $category_discount);
 
         return $highest_discount;
     }
