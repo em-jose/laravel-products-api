@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\Builder;
 
 class ProductController extends Controller
 {
@@ -73,17 +73,7 @@ class ProductController extends Controller
                 );
             });
 
-        $category_filter = $request->query('category');
-
-        if (!is_null($category_filter)) {
-            $query->where('categories.name', '=', $category_filter);
-        }
-
-        $price_less_than_filter = $request->query('priceLessThan');
-
-        if (!is_null($price_less_than_filter)) {
-            $query->where('prices.original_price', '<=', $price_less_than_filter);
-        }
+        $this->applySearchFilters($query, $request);
 
         $products_array = [
             'products' => []
@@ -94,8 +84,17 @@ class ProductController extends Controller
                 return false;
             }
 
+            $limit = 5;
+            $count = 1;
+
             foreach ($products as $product) {
                 $products_array['products'][] = $this->processProducts($product);
+
+                if ($limit == $count) {
+                    return false;
+                }
+
+                $count++;
             }
         });
 
@@ -141,6 +140,26 @@ class ProductController extends Controller
     }
 
     /**
+     * Apply to the query the filters submitted by the user
+     *
+     * @return void
+     */
+    public function applySearchFilters(Builder &$query, Request $request)
+    {
+        $category_filter = $request->query('category');
+
+        if (!is_null($category_filter)) {
+            $query->where('categories.name', '=', $category_filter);
+        }
+
+        $price_less_than_filter = (int) $request->query('priceLessThan');
+
+        if (!is_null($price_less_than_filter)) {
+            $query->where('prices.original_price', '<=', $this->formatPriceReverse($price_less_than_filter));
+        }
+    }
+
+    /**
      * Apply a percentage discount to a price.
      *
      * @return int
@@ -163,6 +182,22 @@ class ProductController extends Controller
         $highest_discount = max($product_discount, $category_discount);
 
         return $highest_discount;
+    }
+
+    /**
+     * Format price from 111,11 to 11111
+     */
+    public function formatPrice(int $price)
+    {
+        return number_format($price, 2, '', '');
+    }
+
+    /**
+     * Format price from 11111 to 111,11
+     */
+    public function formatPriceReverse(int $price)
+    {
+        return ($price / 100);
     }
 
     /**
