@@ -25,7 +25,7 @@ class StressSeeder extends Seeder
         // Populate products and prices tables
         $categories_ids = DB::table('categories')->pluck('id');
 
-        for ($i=0; $i < 2000; $i++) {
+        for ($i=0; $i < 20000; $i++) {
             $product = new Product();
             $product->sku = fake()->unique()->numerify('#####');
             $product->name = fake()->words(3, true);
