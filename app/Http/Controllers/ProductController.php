@@ -52,7 +52,7 @@ class ProductController extends Controller
             )
             ->leftJoin('discount_categories', function ($join) {
                 $join->on(
-                    'discount_categories.id',
+                    'discount_categories.category_id',
                     '=',
                     'products.category_id'
                 )->where(
@@ -149,13 +149,21 @@ class ProductController extends Controller
         $category_filter = $request->query('category');
 
         if (!is_null($category_filter)) {
-            $query->where('categories.name', '=', $category_filter);
+            $query->where(
+                'categories.name',
+                '=',
+                $category_filter
+            );
         }
 
-        $price_less_than_filter = (int) $request->query('priceLessThan');
+        $price_less_than_filter = $request->query('priceLessThan');
 
         if (!is_null($price_less_than_filter)) {
-            $query->where('prices.original_price', '<=', $this->formatPriceReverse($price_less_than_filter));
+            $query->where(
+                'prices.original_price',
+                '<=',
+                (int) $this->formatPriceReverse($price_less_than_filter)
+            );
         }
     }
 
