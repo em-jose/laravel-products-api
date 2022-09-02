@@ -13,6 +13,7 @@ class Price extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'product_id',
         'original_price',
         'currency'
     ];
