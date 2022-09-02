@@ -129,8 +129,8 @@ class ProductController extends Controller
             'name' => $product->name,
             'category' => $product->category_name,
             'price' => [
-                'original' => number_format($original_price, 2, '', ''),
-                'final' => number_format($final_price, 2, '', ''),
+                'original' => $this->formatPrice($original_price),
+                'final' => $this->formatPrice($final_price),
                 'discount_percentage' => $discount_percentage,
                 'currency' => 'EUR'
             ]
