@@ -44,6 +44,23 @@ docker run --rm \
 - User name: sail
 - Password: password
 
+## Available routes
+
+- Get products
+```shell
+localhost/api/products
+```
+
+- Filter by category
+```shell
+localhost/api/products?category=boots
+```
+
+- Filter by price:
+```shell
+localhost/api/products?priceLessThan=90000
+```
+
 ## Running tests
 
 - Use this command to run all the tests
