@@ -5,6 +5,7 @@
 - [Overview](#overview)
 - [Installation](#installation)
 - [Database connection](#database-connection)
+- [Available routes](#available-routes)
 - [Running tests](#running-tests)
 
 ## Overview
