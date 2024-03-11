@@ -12,6 +12,8 @@
 
 API built with Laravel to get a list of products with their discounts applied. You can filter this list by category and by "price less than".
 
+This app was created for a technical test where the objective was to develop an API where a list of products could be sent and a price adjustment and different discounts applied to those products. In addition to this, the API should respond to large volumes of products, being able to process a large amount of data if necessary.
+
 ## Installation
 
 - Download the project
